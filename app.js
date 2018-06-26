@@ -6,10 +6,10 @@ const
   express = require ('express'),
   mongoose = require ('mongoose'),
   winston = require ('winston'),
-  session = require('express-session'),
+  session = require ('express-session'),
   bodyParser = require ('body-parser'),
-  helmet = require('helmet'),
-  favicon = require('serve-favicon');
+  helmet = require ('helmet'),
+  favicon = require ('serve-favicon');
 
 //! Setup & expose
 const app = module.exports = express ();
@@ -35,6 +35,8 @@ app
   }));
 
 //! Logger
+const { log } = console;
+const { highlight } = require ('cli-highlight');
 app.logger = new winston.Logger ();
 app.logger.configure ({
   transports: [
@@ -55,10 +57,25 @@ app.logger.configure ({
     }),
   ],
 });
+app.outputs = {
+  json (tag, code) {
+    log (`[${tag}]`.magenta.bold);
+    log (highlight (JSON.stringify (code, null, 2)));
+  }
+};
 
 //! Routes
 app.all ('*', (req, res, next) => {
-  app.logger.info (`${req.method.blue.bold} ${req.path}`);
+  const methods = {
+    'GET': req.method.blue.bold,
+    'POST': req.method.green.bold,
+    'PUT': req.method.yellow.bold,
+    'DELETE': req.method.red.bold,
+    'PATCH': req.method.cyan.bold,
+  };
+  app.logger.info (`${methods [req.method]} ${req.path}`);
+  //app.outputs.json ('HEADERS', req.headers);
+  app.outputs.json ('BODY', req.body);
   next ();
 });
 app.all ('/', (req, res) => {
