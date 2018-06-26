@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon .",
-    "debug": "node inspect ."
+    "debug": "node inspect .",
+    "now-start": "node ."
   },
   "author": "dannegm",
   "license": "MIT",

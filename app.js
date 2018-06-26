@@ -9,12 +9,11 @@ const
   session = require ('express-session'),
   bodyParser = require ('body-parser'),
   helmet = require ('helmet'),
+  cors = require ('cors'),
   favicon = require ('serve-favicon');
 
 //! Setup & expose
-const app = module.exports = express ();
-const server = require ('http').Server (app);
-const io = require ('socket.io') (server);
+const app = express ();
 const MongoStore = require ('connect-mongo') (session);
 
 app.locals.hostname = settings.server.hostname;
@@ -23,6 +22,7 @@ mongoose.connect (settings.mongo.schema);
 app
   .use (favicon ('./favicon.ico'))
   .use (helmet ())
+  .use (cors ())
   .use (bodyParser.json ())
   .use (bodyParser.urlencoded ({ extended: false }))
   .use (session ({
@@ -33,6 +33,9 @@ app
     resave: true,
     saveUninitialized: true
   }));
+
+const server = require ('http').Server (app);
+const io = require ('socket.io') (server, { 'pingInterval': 100, 'pingTimeout': 30000 });
 
 //! Logger
 const { log } = console;
@@ -73,7 +76,7 @@ app.all ('*', (req, res, next) => {
     'DELETE': req.method.red.bold,
     'PATCH': req.method.cyan.bold,
   };
-  app.logger.info (`${methods [req.method]} ${req.path}`);
+  app.logger.info (`${' HTTP '.black.bold.bgWhite} ${methods [req.method]} ${req.path}`);
   //app.outputs.json ('HEADERS', req.headers);
   app.outputs.json ('BODY', req.body);
   next ();
@@ -88,6 +91,12 @@ app.all ('/', (req, res) => {
 
 //! Sockets
 io.on ('connection', (socket) => {
+  socket.use ((packet, next) => {
+    app.logger.info (`${' SOCKET '.black.bold.bgWhite} ${'on'.blue.bold}${'::'.bold}${packet [0].green.bold}`);
+    app.outputs.json ('BODY', packet [1]);
+    return next ();
+  });
+
   socket.emit ('connected', { message: `Welcome to ${process.env.npm_package_name}.` });
   socket.on ('message', (data) => {
     socket.emit ('message', data);
@@ -97,11 +106,7 @@ io.on ('connection', (socket) => {
 //! Server
 const deploy = () => {
   const schema = `http://${settings.server.hostname}:${settings.server.port}`;
-  app.listen (settings.server.port);
+  server.listen (settings.server.port);
   app.logger.info (`Listening on ${schema.yellow}`);
 };
-
-//! Expose port
-if (!module.parent) {
-  deploy ();
-}
+deploy ();
