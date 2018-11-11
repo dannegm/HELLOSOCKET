@@ -1,7 +1,7 @@
 'use strict';
 require ('colors');
 
-const settings = require (`./config/settings`);
+const settings = require ('./config/settings');
 const
   express = require ('express'),
   mongoose = require ('mongoose'),
@@ -12,12 +12,13 @@ const
   cors = require ('cors'),
   favicon = require ('serve-favicon');
 
-//! Setup & expose
+//* Setup & expose
 const app = express ();
 const MongoStore = require ('connect-mongo') (session);
 
 app.locals.hostname = settings.server.hostname;
-mongoose.connect (settings.mongo.schema);
+mongoose.connect (settings.mongo.schema, settings.mongo.options);
+mongoose.set ('useFindAndModify', false);   //! Workaround to get around deprecation warnings
 
 app
   .use (favicon ('./favicon.ico'))
@@ -37,7 +38,7 @@ app
 const server = require ('http').Server (app);
 const io = require ('socket.io') (server, { 'pingInterval': 100, 'pingTimeout': 30000 });
 
-//! Logger
+//* Logger
 const { log } = console;
 const { highlight } = require ('cli-highlight');
 app.logger = new winston.Logger ();
@@ -48,6 +49,7 @@ app.logger.configure ({
       timestamp: (new Date ()).toISOString (),
       colorize: true,
     }),
+
     new (winston.transports.File) ({
       name: 'File',
       filename: `${process.env.npm_package_name}.log`,
@@ -67,7 +69,7 @@ app.outputs = {
   }
 };
 
-//! Routes
+//* Routes
 app.all ('*', (req, res, next) => {
   const methods = {
     'GET': req.method.blue.bold,
@@ -89,7 +91,7 @@ app.all ('/', (req, res) => {
   });
 });
 
-//! Sockets
+//* Sockets
 io.on ('connection', (socket) => {
   socket.use ((packet, next) => {
     app.logger.info (`${' SOCKET '.black.bold.bgWhite} ${'on'.blue.bold}${'::'.bold}${packet [0].green.bold}`);
@@ -103,7 +105,7 @@ io.on ('connection', (socket) => {
   });
 });
 
-//! Server
+//* Server
 const deploy = () => {
   const schema = `http://${settings.server.hostname}:${settings.server.port}`;
   server.listen (settings.server.port);

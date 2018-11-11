@@ -1,12 +1,9 @@
 'use strict';
 
-const { Schema, model } = require ('mongoose');
-const collection = 'users';
+const { createModel, createUniqueIndex } = require('./baseSchema');
+const collectionName = 'user';
 
-const body = {
-  created_at: { type: Date, default: Date.now },
-  updated_at: { type: Date, default: Date.now },
-
+const schemaDefinition = {
   name: { type: String, required: true },
   email: { type: String, required: true },
 
@@ -22,4 +19,21 @@ const body = {
     default: 'user',
   },
 };
-module.exports = model ('user', new Schema (body, { collection });
+
+const schemaIndexed = createUniqueIndex ({
+  collectionName,
+  schemaDefinition,
+  indexName: 'user_email_unique',
+  indexDefinition: {
+    email: 1,
+  },
+});
+
+const model = createModel ({
+  collectionName,
+  schemaDefinition: schemaIndexed,
+});
+
+module.exports = {
+  model,
+};

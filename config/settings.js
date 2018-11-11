@@ -13,6 +13,15 @@ let mongo = {
   database: process.env.MONGO_DATABASE,
   user: process.env.MONGO_USER || '',
   password: process.env.MONGO_PASSWORD || '',
+  options: {
+    useNewUrlParser: true,              // New parser pass option
+    autoIndex: false,                   // Don't build indexes
+    reconnectTries: Number.MAX_VALUE,   // Never stop trying to reconnect
+    reconnectInterval: 500,             // Reconnect every 500ms
+    poolSize: 10,                       // Maintain up to 10 socket connections
+    bufferMaxEntries: 0,                // If not connected, return errors immediately rather than waiting for reconnect
+    keepAlive: 120,                     //check TCP socket status every x milliseconds.
+  },
 };
 mongo.auth = mongo.user != '' && mongo.password != '' ? `${mongo.user}:${mongo.password}@` : '';
 mongo.schema = `mongodb://${mongo.auth}${mongo.host}:${mongo.port}/${mongo.database}`;
