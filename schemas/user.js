@@ -1,39 +1,39 @@
 'use strict';
 
-const { createModel, createUniqueIndex } = require('./baseSchema');
+const { createModel, createUniqueIndex } = require ('./baseSchema');
 const collectionName = 'user';
 
 const schemaDefinition = {
-  name: { type: String, required: true },
-  email: { type: String, required: true },
+    name: { type: String, required: true },
+    email: { type: String, required: true },
 
-  credentials: {
-    password: String,
-    accessToken: String,
-  },
+    credentials: {
+        password: String,
+        accessToken: String,
+    },
 
-  role: {
-    type: String,
-    required: true,
-    enum: ['admin', 'user'],
-    default: 'user',
-  },
+    role: {
+        type: String,
+        required: true,
+        enum: ['admin', 'user'],
+        default: 'user',
+    },
 };
 
 const schemaIndexed = createUniqueIndex ({
-  collectionName,
-  schemaDefinition,
-  indexName: 'user_email_unique',
-  indexDefinition: {
-    email: 1,
-  },
+    collectionName,
+    schemaDefinition,
+    indexName: 'user_email_unique',
+    indexDefinition: {
+        email: 1,
+    },
 });
 
 const model = createModel ({
-  collectionName,
-  schemaDefinition: schemaIndexed,
+    collectionName,
+    schemaDefinition: schemaIndexed,
 });
 
 module.exports = {
-  model,
+    model,
 };
