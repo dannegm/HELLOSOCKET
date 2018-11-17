@@ -15,6 +15,11 @@ const schemaDefinition = {
     email: { type: String, required: true },
     photoUrl: String,
 
+    credentials: {
+        password: String,
+        accessToken: String,
+        validateToken: String,
+    },
 
     role: {
         type: String,
@@ -30,6 +35,7 @@ const schemaIndexed = createUniqueIndex ({
     indexName: 'user_credentials_unique',
     indexDefinition: {
         'email': 1,
+        'credentials.accessToken': 1,
     },
 });
 
