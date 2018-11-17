@@ -5,7 +5,7 @@ let server = {
     hostname: process.env.HOSTNAME,
     port: process.env.PORT || 3000,
     secret: process.env.SECRET,
-}
+};
 
 let mongo = {
     host: process.env.MONGO_HOST,

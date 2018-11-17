@@ -10,17 +10,15 @@ const baseSchemaDefinition = {
 
 const createUniqueIndex = (options) => {
     const schema = new Schema (options.schemaDefinition, { collectionName: options.collectionName });
-    const baseConstrains = { name: options.indexName, unique: true };
-    const indexConstrains = additionalConstrains ? { ...baseConstrains, ...additionalConstrains } : baseConstrains;
-    schema.index (options.indexDefinition, indexConstrains);
+    schema.index (options.indexDefinition, { name: options.indexName, unique: true });
     return schema;
-}
+};
 
 const createModel = (options) => {
-    const model = model (options.collectionName, { ...baseSchemaDefinition, ...options.schemaDefinition });
-    model.ensureIndexes ();
-    return model;
-}
+    const createdModel = model (options.collectionName, { ...baseSchemaDefinition, ...options.schemaDefinition.obj });
+    createdModel.ensureIndexes ();
+    return createdModel;
+};
 
 module.exports = {
     createUniqueIndex,

@@ -3,7 +3,7 @@
 module.exports = (app) => {
     const getUser = (req, res) => {
         res
-        .status (400)
+        .status (200)
         .json (req.user);
     };
 
