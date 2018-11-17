@@ -4,13 +4,6 @@ const { createModel, createUniqueIndex } = require ('./baseSchema');
 const collectionName = 'user';
 
 const schemaDefinition = {
-    status: {
-        type: String,
-        required: true,
-        enum: ['registered', 'active', 'suspended'],
-        default: 'registered',
-    },
-
     name: { type: String, required: true },
     email: { type: String, required: true },
     photoUrl: String,
@@ -23,9 +16,15 @@ const schemaDefinition = {
 
     role: {
         type: String,
-        required: true,
         enum: ['super', 'admin', 'user'],
         default: 'user',
+        required: true,
+    },
+    status: {
+        type: String,
+        enum: ['registered', 'active', 'suspended'],
+        default: 'registered',
+        required: true,
     },
 };
 

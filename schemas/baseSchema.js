@@ -1,7 +1,7 @@
 'use strict';
 
 const mongoose = require ('mongoose');
-const { Schema, model } = mongoose;
+const { Schema } = mongoose;
 
 const baseSchemaDefinition = {
     created_at: { type: Date, default: Date.now },
@@ -9,14 +9,14 @@ const baseSchemaDefinition = {
 };
 
 const createUniqueIndex = (options) => {
-    const schema = new Schema (options.schemaDefinition, { collectionName: options.collectionName });
+    const schema = new Schema ({ ...baseSchemaDefinition, ...options.schemaDefinition }, { collectionName: options.collectionName });
     schema.index (options.indexDefinition, { name: options.indexName, unique: true });
     return schema;
 };
 
 const createModel = (options) => {
-    const createdModel = model (options.collectionName, { ...baseSchemaDefinition, ...options.schemaDefinition.obj });
-    createdModel.ensureIndexes ();
+    const createdModel = mongoose.model (options.collectionName, options.schemaDefinition);
+    createdModel.createIndexes ();
     return createdModel;
 };
 

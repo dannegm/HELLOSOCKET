@@ -3,7 +3,7 @@
 const { errors } = require ('../utils');
 const { UserSchema } = require ('../schemas');
 
-class UserModel {
+const UserModel = {
     async create (user) {
         try {
             const registered_user = await UserSchema.model.findOne (
@@ -19,23 +19,25 @@ class UserModel {
         } catch (e) {
             throw e || errors.mongo.UNEXPECTED;
         }
-    }
+    },
+
     async update () {
 
-    }
-    async delete () {
-        // TODO: Soft delete
-    }
+    },
 
-    async upsert (user) {
+    async delete () {
+
+    },
+
+    async upsert ($set) {
         const query = { $or: [
             {
-                email: user.email,
+                email: $set.email,
             }
         ]};
-        return await UserSchema.model.create (query, { $set: user }, {
+        return await UserSchema.model.findOneAndUpdate (query, { $set }, {
             upsert: true,
         });
-    }
+    },
 }
 module.exports = UserModel;

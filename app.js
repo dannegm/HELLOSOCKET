@@ -87,6 +87,7 @@ app.all ('*', (req, res, next) => {
     app.outputs.json ('BODY', req.body);
     next ();
 });
+
 app.all ('/', (req, res) => {
     res.json ({
         method: req.method,

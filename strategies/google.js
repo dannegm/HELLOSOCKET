@@ -4,7 +4,7 @@ const passport = require ('passport');
 const GoogleStrategy = require ('passport-google-oauth').OAuth2Strategy;
 
 const { credentials } = require ('../config/settings');
-const { UserSchema } = require ('../schemas');
+const { UserModel } = require ('../models');
 
 module.exports = (app) => {
     passport.use (
@@ -24,7 +24,8 @@ module.exports = (app) => {
                             accessToken,
                         },
                     };
-                    const user = await (new UserModel ()).upsert (data);
+                    app.outputs.json ('USER', data);
+                    const user = await UserModel.upsert (data);
                     return done (null, user);
                 } catch (e) {
                     return done (e);
@@ -34,7 +35,7 @@ module.exports = (app) => {
     );
 
     app.get ('/auth/google', passport.authenticate ('google', { scope: ['https://www.googleapis.com/auth/plus.login', 'email'] }));
-    app.get ('/auth/google/callback', passport.authenticate ('google', { failureRedirect: '/' }), (req, res) => {
+    app.get ('/auth/google/callback', passport.authenticate ('google', { failureRedirect: '/auth/fail' }), (req, res) => {
         res.redirect ('/user');
     });
 };
