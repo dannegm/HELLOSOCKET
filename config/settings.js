@@ -31,6 +31,10 @@ let credentials = {
         CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
         CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     },
+    mailgun: {
+        API_KEY: process.env.MAILGUN_API_KEY,
+        DOMAIN: process.env.MAILGUN_DOMAIN,
+    },
 };
 
 module.exports = {
