@@ -1,6 +1,5 @@
 'use strict';
 
-
 const ctrl = require ('../controllers/UserController');
 
 module.exports = (app) => {

@@ -4,6 +4,7 @@ const passport = require ('passport');
 
 module.exports = (app) => {
     require ('../strategies/google') (app);
+    require ('../strategies/local') (app);
 
     passport.serializeUser ((user, done) => {
         done (null, user);

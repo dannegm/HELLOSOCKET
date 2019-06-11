@@ -21,6 +21,13 @@ const UserModel = {
         }
     },
 
+    async verify ({ username, password }) {
+        return await UserSchema.model.find({
+            email: username,
+            'credentials.password': password
+        })
+    },
+
     async update () {
 
     },
